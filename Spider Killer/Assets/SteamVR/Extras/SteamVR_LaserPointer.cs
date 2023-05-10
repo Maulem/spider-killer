@@ -23,6 +23,7 @@ namespace Valve.VR.Extras
         public event PointerEventHandler PointerIn;
         public event PointerEventHandler PointerOut;
         public event PointerEventHandler PointerClick;
+        public event PointerEventHandler PointerClickDown;
 
         Transform previousContact = null;
 
@@ -82,6 +83,15 @@ namespace Valve.VR.Extras
                 PointerClick(this, e);
         }
 
+
+        public virtual void OnPointerClickDown(PointerEventArgs e)
+        {
+            if (PointerClick != null)
+                PointerClickDown(this, e);
+        }
+
+
+
         public virtual void OnPointerOut(PointerEventArgs e)
         {
             if (PointerOut != null)
@@ -140,6 +150,13 @@ namespace Valve.VR.Extras
                 argsClick.flags = 0;
                 argsClick.target = hit.transform;
                 OnPointerClick(argsClick);
+            }
+
+
+            if (bHit && interactWithUI.GetStateDown(pose.inputSource))
+            {
+                PointerEventArgs argsClick = new PointerEventArgs();
+                OnPointerClickDown(argsClick);
             }
 
             if (interactWithUI != null && interactWithUI.GetState(pose.inputSource))
