@@ -81,12 +81,12 @@ namespace Valve.VR.Extras
         {
             if (PointerClick != null)
                 PointerClick(this, e);
-        }
+        }   
 
 
         public virtual void OnPointerClickDown(PointerEventArgs e)
         {
-            if (PointerClick != null)
+            if (PointerClickDown != null)
                 PointerClickDown(this, e);
         }
 
@@ -156,6 +156,10 @@ namespace Valve.VR.Extras
             if (bHit && interactWithUI.GetStateDown(pose.inputSource))
             {
                 PointerEventArgs argsClick = new PointerEventArgs();
+                argsClick.fromInputSource = pose.inputSource;
+                argsClick.distance = hit.distance;
+                argsClick.flags = 0;
+                argsClick.target = hit.transform;
                 OnPointerClickDown(argsClick);
             }
 

@@ -9,7 +9,7 @@ public class laser : MonoBehaviour
 {
     private SteamVR_LaserPointer steamVrLaserPointer;
     private CharacterController characterController;
-
+    private Rigidbody rigidbody;
 
     private float moveSpeed = 25f; // Velocidade de movimento do jogador
 
@@ -31,6 +31,7 @@ public class laser : MonoBehaviour
     private void Awake()
     {
         characterController = transform.parent.parent.GetComponent<CharacterController>();
+        rigidbody = transform.parent.parent.GetComponent<Rigidbody>();
         steamVrLaserPointer = gameObject.GetComponent<SteamVR_LaserPointer>();
         steamVrLaserPointer.PointerIn += OnPointerIn;
         steamVrLaserPointer.PointerOut += OnPointerOut;
@@ -40,13 +41,8 @@ public class laser : MonoBehaviour
 
     private void OnPointerClick(object sender, PointerEventArgs e)
     {
-        GameObject clickegObject = e.target.gameObject;
-        Vector3 clickedPosition = clickegObject.transform.position;
-        objectFinal = clickedPosition;
-        isHanging = true;
-
-        Debug.Log("objeto clicado com o laser " + e.target.name);
-        Debug.Log("Clicked object position: "+ clickedPosition);
+        
+        StartCoroutine(DisableHangingDelayed());
     }
 
 
@@ -62,6 +58,21 @@ private void OnPointerIn(object sender, PointerEventArgs e)
 
     private void OnPointerClickDown(object sender, PointerEventArgs e)
     {
+    //     RaycastHit hit = e.targetHit;
+    //     if (hit.collider != null)
+    // {
+    //     Vector3 clickedPosition = hit.point; // Get the point of the hit
+    //     objectFinal = clickedPosition;
+    //     isHanging = true;
+
+    //     Debug.Log("Clicked Down");
+    // }
+
+        GameObject clickegObject = e.target.gameObject;
+        Vector3 clickedPosition = clickegObject.transform.position;
+        objectFinal = clickedPosition;
+        isHanging = true;
+
         Debug.Log("Clicked Down");
     }
 
@@ -75,14 +86,19 @@ private void OnPointerIn(object sender, PointerEventArgs e)
     private void MoveTowardsTarget()
     {
         Vector3 hangDirection = (objectFinal - transform.position).normalized;
-
-        Debug.Log("aqui" + hangDirection);
+        // Vector3 force = hangDirection * moveSpeed;
+        // rigidbody.AddForce(force*1000);
         playerVelocity = hangDirection * moveSpeed * Time.deltaTime;
         characterController.Move(playerVelocity);
-
-
-        // transform.position += hangDirection * moveSpeed * Time.deltaTime;
     }
+
+
+    private IEnumerator DisableHangingDelayed()
+    {
+    yield return new WaitForSeconds(0.25f); // Wait for 1.5 seconds
+    isHanging = false;
+    }
+
 
 }
 
