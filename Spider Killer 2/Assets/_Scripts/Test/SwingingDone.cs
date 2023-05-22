@@ -33,7 +33,7 @@ public class SwingingDone : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(swingKey)) StartSwing();
+        if (Input.GetKeyDown(swingKey)) StartSwing(predictionHit.point);
         if (Input.GetKeyUp(swingKey)) StopSwing();
 
         CheckForSwingPoints();
@@ -88,10 +88,11 @@ public class SwingingDone : MonoBehaviour
     }
 
 
-    public void StartSwing()
+    public void StartSwing(Vector3 predictionHitPoint)
     {
+        Debug.Log("StartSwing foi chamado com o prediction" + predictionHitPoint);
         // return if predictionHit not found
-        if (predictionHit.point == Vector3.zero) return;
+        if (predictionHitPoint == Vector3.zero) return;
 
         // deactivate active grapple
         if(GetComponent<Grappling>() != null)
@@ -100,7 +101,7 @@ public class SwingingDone : MonoBehaviour
 
         pm.swinging = true;
 
-        swingPoint = predictionHit.point;
+        swingPoint = predictionHitPoint;
         joint = player.gameObject.AddComponent<SpringJoint>();
         joint.autoConfigureConnectedAnchor = false;
         joint.connectedAnchor = swingPoint;
