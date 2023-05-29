@@ -142,13 +142,9 @@ namespace Valve.VR.Extras
                 dist = hit.distance;
             }
 
-            if (bHit && interactWithUI.GetStateUp(pose.inputSource))
+            if (interactWithUI.GetStateUp(pose.inputSource))
             {
                 PointerEventArgs argsClick = new PointerEventArgs();
-                argsClick.fromInputSource = pose.inputSource;
-                argsClick.distance = hit.distance;
-                argsClick.flags = 0;
-                argsClick.target = hit.transform;
                 OnPointerClick(argsClick);
             }
 
@@ -160,6 +156,7 @@ namespace Valve.VR.Extras
                 argsClick.distance = hit.distance;
                 argsClick.flags = 0;
                 argsClick.target = hit.transform;
+                argsClick.point = hit.point;
                 OnPointerClickDown(argsClick);
             }
 
@@ -183,6 +180,7 @@ namespace Valve.VR.Extras
         public uint flags;
         public float distance;
         public Transform target;
+        public Vector3 point;
     }
 
     public delegate void PointerEventHandler(object sender, PointerEventArgs e);

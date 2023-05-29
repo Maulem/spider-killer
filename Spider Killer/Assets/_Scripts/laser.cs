@@ -10,8 +10,9 @@ public class laser : MonoBehaviour
     private SteamVR_LaserPointer steamVrLaserPointer;
     private CharacterController characterController;
     private Rigidbody rigidbody;
+    public GameObject Player;
 
-    private float moveSpeed = 25f; // Velocidade de movimento do jogador
+    private float moveSpeed = 50f; // Velocidade de movimento do jogador
 
     private bool isHanging = false;
 
@@ -30,72 +31,44 @@ public class laser : MonoBehaviour
 
     private void Awake()
     {
+        Player = transform.parent.parent.gameObject;
         characterController = transform.parent.parent.GetComponent<CharacterController>();
         rigidbody = transform.parent.parent.GetComponent<Rigidbody>();
         steamVrLaserPointer = gameObject.GetComponent<SteamVR_LaserPointer>();
-        steamVrLaserPointer.PointerIn += OnPointerIn;
-        steamVrLaserPointer.PointerOut += OnPointerOut;
         steamVrLaserPointer.PointerClick += OnPointerClick;
         steamVrLaserPointer.PointerClickDown += OnPointerClickDown;
     }
 
     private void OnPointerClick(object sender, PointerEventArgs e)
     {
-        
+        Player.GetComponent<Locomotion>().swinging = false;
         StartCoroutine(DisableHangingDelayed());
-    }
-
-
-    private void OnPointerOut(object sender, PointerEventArgs e)
-    {
-    Debug.Log("laser saiu do objeto " + e.target.name);
-    }
-
-private void OnPointerIn(object sender, PointerEventArgs e)
-    {
-        Debug.Log("laser entrou do objeto " + e.target.name);
     }
 
     private void OnPointerClickDown(object sender, PointerEventArgs e)
     {
-    //     RaycastHit hit = e.targetHit;
-    //     if (hit.collider != null)
-    // {
-    //     Vector3 clickedPosition = hit.point; // Get the point of the hit
-    //     objectFinal = clickedPosition;
-    //     isHanging = true;
 
-    //     Debug.Log("Clicked Down");
-    // }
-
-        GameObject clickegObject = e.target.gameObject;
-        Vector3 clickedPosition = clickegObject.transform.position;
+        Vector3 clickedPosition = e.point;
         objectFinal = clickedPosition;
         isHanging = true;
-
-        Debug.Log("Clicked Down");
+        Player.GetComponent<Locomotion>().swinging = true;
     }
 
 
-    private void HangOnWeb(Vector3 webPoint)
-    {
-        isHanging = true;
-
-    }
 
     private void MoveTowardsTarget()
     {
         Vector3 hangDirection = (objectFinal - transform.position).normalized;
-        // Vector3 force = hangDirection * moveSpeed;
-        // rigidbody.AddForce(force*1000);
-        playerVelocity = hangDirection * moveSpeed * Time.deltaTime;
-        characterController.Move(playerVelocity);
+        playerVelocity = hangDirection * moveSpeed ;
+        
+        characterController.Move(playerVelocity * Time.deltaTime);
     }
 
 
     private IEnumerator DisableHangingDelayed()
     {
-    yield return new WaitForSeconds(0.25f); // Wait for 1.5 seconds
+    yield return new WaitForSeconds(0.25f); // Wait for 0.25 seconds
+    Player.GetComponent<Locomotion>().playerVelocity =playerVelocity; 
     isHanging = false;
     }
 
