@@ -4,8 +4,7 @@ using UnityEngine;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
 
-public class Locomotion : MonoBehaviour
-{
+public class Locomotion : MonoBehaviour {
     private CharacterController controller;
     public Vector3 playerVelocity;
     private bool groundedPlayer;
@@ -21,30 +20,29 @@ public class Locomotion : MonoBehaviour
 
 
 
-    private void Start()
-    {
+    private void Start() {
         startPosition = transform.position;
         controller = gameObject.GetComponent<CharacterController>();
         actionSet.Activate(hand);
         swinging = false;
     }
 
-    void Update()
-    {
-    if (swinging){
-        playerVelocity.y = 0f;
-        return;
-    };
+    void Update() {
+        if (swinging) {
+            playerVelocity.y = 0f;
+            return;
+        }
 
-
-
-    
         if(transform.position.y < 2){
             playerVelocity = new Vector3(0,0,0);
             playerVelocity.y = 0f;
             transform.position = startPosition;
+            Debug.Log("Dead!");
             return;
         }
+
+        controller = gameObject.GetComponent<CharacterController>();
+
         Vector2 gamepad = moveAction[hand].axis;
        
         groundedPlayer = controller.isGrounded;
@@ -61,7 +59,7 @@ public class Locomotion : MonoBehaviour
         playerVelocity.x =  playerVelocity.x/1.05f;
         playerVelocity.z =  playerVelocity.z/1.05f;
         playerVelocity.y += gravityValue * Time.deltaTime;
-        Debug.Log("Player Velocity" + playerVelocity);
+        // Debug.Log("Player Velocity" + playerVelocity);
         controller.Move(playerVelocity  * Time.deltaTime);
     }
 }

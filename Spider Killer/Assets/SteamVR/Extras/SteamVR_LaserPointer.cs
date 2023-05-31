@@ -13,7 +13,7 @@ namespace Valve.VR.Extras
 
         public bool active = true;
         public Color color;
-        public float thickness = 0.002f;
+        public float thickness = 0.000f;
         public Color clickColor = Color.green;
         public GameObject holder;
         public GameObject pointer;
@@ -46,7 +46,7 @@ namespace Valve.VR.Extras
 
             pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
             pointer.transform.parent = holder.transform;
-            pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
+            pointer.transform.localScale = new Vector3(thickness, thickness, 0f);
             pointer.transform.localPosition = new Vector3(0f, 0f, 50f);
             pointer.transform.localRotation = Quaternion.identity;
             BoxCollider collider = pointer.GetComponent<BoxCollider>();
@@ -68,7 +68,7 @@ namespace Valve.VR.Extras
             }
             Material newMaterial = new Material(Shader.Find("Unlit/Color"));
             newMaterial.SetColor("_Color", color);
-            pointer.GetComponent<MeshRenderer>().material = newMaterial;
+            // pointer.GetComponent<MeshRenderer>().material = newMaterial;
         }
 
         public virtual void OnPointerIn(PointerEventArgs e)
@@ -163,12 +163,14 @@ namespace Valve.VR.Extras
             if (interactWithUI != null && interactWithUI.GetState(pose.inputSource))
             {
                 pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
-                pointer.GetComponent<MeshRenderer>().material.color = clickColor;
+
+                // pointer.GetComponent<MeshRenderer>().material.color = clickColor;
             }
             else
             {
                 pointer.transform.localScale = new Vector3(thickness, thickness, dist);
-                pointer.GetComponent<MeshRenderer>().material.color = color;
+
+                // pointer.GetComponent<MeshRenderer>().material.color = color;
             }
             pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
         }
