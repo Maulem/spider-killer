@@ -10,6 +10,7 @@ namespace Valve.VR.Extras
 
         //public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.__actions_default_in_InteractUI;
         public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
+        public SteamVR_Action_Boolean Grip = SteamVR_Input.GetBooleanAction("GrabGrip");
 
         public bool active = true;
         public Color color;
@@ -24,6 +25,8 @@ namespace Valve.VR.Extras
         public event PointerEventHandler PointerOut;
         public event PointerEventHandler PointerClick;
         public event PointerEventHandler PointerClickDown;
+        public event PointerEventHandler GripClickDown;
+        public event PointerEventHandler GripClickUp;
 
         Transform previousContact = null;
 
@@ -90,6 +93,18 @@ namespace Valve.VR.Extras
                 PointerClickDown(this, e);
         }
 
+        public virtual void OnGripClickDown(PointerEventArgs e)
+        {
+            if (GripClickDown != null)
+                GripClickDown(this, e);
+        }
+
+        public virtual void OnGripClickUp(PointerEventArgs e)
+        {
+            if (GripClickUp != null)
+                GripClickUp(this, e);
+        }
+
 
 
         public virtual void OnPointerOut(PointerEventArgs e)
@@ -101,6 +116,7 @@ namespace Valve.VR.Extras
 
         private void Update()
         {
+            
             if (!isActive)
             {
                 isActive = true;
@@ -140,6 +156,22 @@ namespace Valve.VR.Extras
             if (bHit && hit.distance < 100f)
             {
                 dist = hit.distance;
+            }
+
+            if (bHit && Grip.GetStateDown(pose.inputSource)) {
+                PointerEventArgs argsClick = new PointerEventArgs();
+                argsClick.fromInputSource = pose.inputSource;
+                argsClick.distance = hit.distance;
+                argsClick.flags = 0;
+                argsClick.target = hit.transform;
+                argsClick.point = hit.point;
+                OnGripClickDown(argsClick);
+                
+            }
+            if (Grip.GetStateUp(pose.inputSource)) {
+                PointerEventArgs argsClick = new PointerEventArgs();
+                OnGripClickUp(argsClick);
+                
             }
 
             if (interactWithUI.GetStateUp(pose.inputSource))

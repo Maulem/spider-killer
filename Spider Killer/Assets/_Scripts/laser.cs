@@ -19,13 +19,14 @@ public class laser : MonoBehaviour {
     private float moveSpeed = 50f; // Velocidade de movimento do jogador
 
     private bool isHanging = false;
+    private bool powerShot = false;
 
     private Vector3 objectFinal;
     private Vector3 playerVelocity;
 
     void Update() {
-        if (isHanging) {
-            // MoveTowardsTarget();
+        if (powerShot) {
+            MoveTowardsTarget();
         }
     }
 
@@ -36,23 +37,41 @@ public class laser : MonoBehaviour {
         steamVrLaserPointer = gameObject.GetComponent<SteamVR_LaserPointer>();
         steamVrLaserPointer.PointerClick += OnPointerClick;
         steamVrLaserPointer.PointerClickDown += OnPointerClickDown;
+        steamVrLaserPointer.GripClickUp += OnGripClickUp;
+        steamVrLaserPointer.GripClickDown += OnGripClickDown;
     }
 
     private void OnPointerClick(object sender, PointerEventArgs e) {
-        Player.gameObject.GetComponent<Locomotion>().swinging = false;
+        // Player.gameObject.GetComponent<Locomotion>().swinging = false;
         StartCoroutine(DisableHangingDelayed());
         Destroy(joint);
-        if (characterController != null) {
-            DestroyImmediate(characterController);
-            characterController = Player.gameObject.AddComponent<CharacterController>();
-        }
+        // if (characterController != null) {
+        //     DestroyImmediate(characterController);
+        //     characterController = Player.gameObject.AddComponent<CharacterController>();
+        // }
+    }
+
+    private void OnGripClickDown(object sender, PointerEventArgs e) {
+        Debug.Log("Grip down!");
+        Vector3 clickedPosition = e.point;
+        objectFinal = clickedPosition;
+        Player.gameObject.GetComponent<Locomotion>().swinging = true;
+        isHanging = true;
+        powerShot = true;
+    }
+
+    private void OnGripClickUp(object sender, PointerEventArgs e) {
+        Debug.Log("Grip up!");
+        StartCoroutine(DisableHangingDelayed());
+        Player.gameObject.GetComponent<Locomotion>().swinging = false;
+        powerShot = false;
     }
 
     private void OnPointerClickDown(object sender, PointerEventArgs e) {
         Vector3 clickedPosition = e.point;
         objectFinal = clickedPosition;
         isHanging = true;
-        Player.gameObject.GetComponent<Locomotion>().swinging = true;
+        // Player.gameObject.GetComponent<Locomotion>().swinging = true;
 
         swingPoint = objectFinal;
         joint = Player.gameObject.AddComponent<SpringJoint>();
